@@ -26,6 +26,25 @@ function buildDefaultSnapshot(): CreatorSnapshot {
   };
 }
 
+export function cloneCreatorSnapshot(
+  snapshot: CreatorSnapshot,
+): CreatorSnapshot {
+  return {
+    ...snapshot,
+    formValues: Object.fromEntries(
+      Object.entries(snapshot.formValues).map(([fieldId, value]) => [
+        fieldId,
+        [...value],
+      ]),
+    ),
+    fieldLocks: { ...snapshot.fieldLocks },
+    promptConfig: {
+      ...snapshot.promptConfig,
+      styleIds: [...snapshot.promptConfig.styleIds],
+    },
+  };
+}
+
 function buildEvaluatedState(snapshot: CreatorSnapshot): EvaluatedCreatorState {
   return evaluateCreatorState(schema, snapshot);
 }
@@ -33,6 +52,7 @@ function buildEvaluatedState(snapshot: CreatorSnapshot): EvaluatedCreatorState {
 export interface CreatorStoreState extends CreatorSnapshot {
   detailSheetFieldId: string | null;
   derived: EvaluatedCreatorState;
+  applySnapshot: (snapshot: CreatorSnapshot) => void;
   setMode: (mode: CreatorSnapshot['mode']) => void;
   setActiveCategory: (categoryId: string) => void;
   setFieldValue: (fieldId: string, value: string[]) => void;
@@ -53,6 +73,18 @@ export const useCreatorStore = create<CreatorStoreState>()(
       ...defaultDerived,
       detailSheetFieldId: null,
       derived: defaultDerived,
+      applySnapshot: (snapshot) =>
+        set(() => {
+          const nextSnapshot = cloneCreatorSnapshot(snapshot);
+          const derived = buildEvaluatedState(nextSnapshot);
+
+          return {
+            ...nextSnapshot,
+            ...derived,
+            derived,
+            detailSheetFieldId: null,
+          };
+        }),
       setMode: (mode) =>
         set((state) => {
           const nextSnapshot = {
@@ -175,4 +207,25 @@ export const useCreatorStore = create<CreatorStoreState>()(
 
 export function getDefaultSnapshot() {
   return defaultSnapshot;
+}
+
+export function getCreatorStoreSnapshot(
+  state: Pick<
+    CreatorStoreState,
+    | 'version'
+    | 'mode'
+    | 'activeCategoryId'
+    | 'formValues'
+    | 'fieldLocks'
+    | 'promptConfig'
+  >,
+) {
+  return cloneCreatorSnapshot({
+    version: state.version,
+    mode: state.mode,
+    activeCategoryId: state.activeCategoryId,
+    formValues: state.formValues,
+    fieldLocks: state.fieldLocks,
+    promptConfig: state.promptConfig,
+  });
 }

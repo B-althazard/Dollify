@@ -86,7 +86,9 @@ button {
 }
 
 .top-status-card h1,
-.creator-placeholder h2 {
+.creator-placeholder h2,
+.preset-strip h2,
+.vault-bridge-card h3 {
   font-family: "Cormorant Garamond", serif;
   margin: 0;
   letter-spacing: 0.02em;
@@ -108,9 +110,11 @@ button {
 
 .status-cluster,
 .placeholder-grid,
+.preset-strip,
 .prompt-studio-meta,
 .prompt-package-panel,
-.prompt-list-group {
+.prompt-list-group,
+.vault-list {
   display: grid;
   gap: 0.75rem;
 }
@@ -457,7 +461,7 @@ button {
 }
 
 .prompt-studio-meta {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .prompt-studio-meta article,
@@ -486,6 +490,142 @@ button {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.75rem;
+}
+
+.preset-strip__header,
+.vault-item,
+.vault-item__meta,
+.vault-toggle-row,
+.vault-bridge-card {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.preset-strip__header,
+.vault-item__meta,
+.vault-bridge-card {
+  justify-content: space-between;
+  align-items: start;
+}
+
+.preset-strip__scroller {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(10.5rem, 1fr);
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.preset-strip__empty,
+.vault-empty,
+.vault-bridge-card p,
+.preset-card p,
+.vault-item__body p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.preset-card,
+.vault-item,
+.vault-toggle {
+  border-radius: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.preset-card {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.preset-card strong,
+.vault-item strong {
+  color: var(--ink-soft);
+}
+
+.preset-card__thumb,
+.vault-item__thumb {
+  min-height: 6.5rem;
+  border-radius: 1rem;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(239, 108, 143, 0.22),
+      rgba(143, 199, 182, 0.14)
+    ),
+    linear-gradient(180deg, rgba(56, 43, 49, 0.92), rgba(26, 19, 22, 0.98));
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: end;
+  padding: 0.7rem;
+}
+
+.preset-card__thumb span,
+.vault-item__thumb span,
+.bridge-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 1.9rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(12, 9, 10, 0.56);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--ink-soft);
+}
+
+.vault-bridge-card {
+  padding: 0.95rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 248, 242, 0.04);
+  flex-wrap: wrap;
+}
+
+.bridge-pill.is-connected {
+  color: var(--success);
+}
+
+.bridge-pill.is-warning {
+  color: var(--accent-2);
+}
+
+.vault-toggle-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.vault-toggle {
+  min-height: 3rem;
+}
+
+.vault-toggle.is-active {
+  border-color: rgba(239, 108, 143, 0.45);
+  background: rgba(239, 108, 143, 0.16);
+}
+
+.vault-item {
+  padding: 0.75rem;
+  text-align: left;
+  align-items: center;
+}
+
+.vault-item__thumb {
+  width: 5.5rem;
+  min-width: 5.5rem;
+  min-height: 5.5rem;
+}
+
+.vault-item__body {
+  display: grid;
+  gap: 0.35rem;
 }
 
 .prompt-config-group {
@@ -583,7 +723,12 @@ button {
 @media (max-width: 639px) {
   .prompt-studio-meta,
   .prompt-studio-actions,
-  .bottom-action-bar {
+  .bottom-action-bar,
+  .vault-toggle-row {
     grid-template-columns: 1fr;
+  }
+
+  .vault-item {
+    align-items: start;
   }
 }

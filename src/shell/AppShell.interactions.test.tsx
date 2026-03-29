@@ -1,7 +1,13 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { vi } from 'vitest';
-
 import { useCreatorStore } from '../features/creator/store';
+import { useLibraryStore } from '../features/library/store';
 import { AppShell } from './AppShell';
 
 function swipeLeft(element: HTMLElement) {
@@ -16,6 +22,7 @@ function swipeLeft(element: HTMLElement) {
 describe('AppShell mobile interactions', () => {
   beforeEach(() => {
     useCreatorStore.getState().resetCreator();
+    useLibraryStore.getState().resetLibrary();
     Object.assign(navigator, {
       clipboard: {
         writeText: vi.fn().mockResolvedValue(undefined),
@@ -55,5 +62,43 @@ describe('AppShell mobile interactions', () => {
       ).toBeInTheDocument();
     });
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
+  });
+
+  it('saves a preset and restores it from the preset strip', async () => {
+    render(<AppShell />);
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Futa-Female' })[0]);
+    fireEvent.click(screen.getByRole('button', { name: 'Save preset' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+    fireEvent.click(screen.getByRole('button', { name: /Preset 01 - Futa/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('button', { name: 'Futa-Female' })[0],
+      ).toHaveClass('is-active');
+    });
+  });
+
+  it('captures a bridge image event into the local gallery', async () => {
+    render(<AppShell />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Send to Venice' }));
+    await act(async () => {
+      window.dispatchEvent(
+        new CustomEvent('xgen:image-received', {
+          detail: {
+            nonce: useLibraryStore.getState().gallery[0]?.nonce,
+            dataUrl: 'data:image/png;base64,abc123',
+          },
+        }),
+      );
+    });
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Open vault' })[0]);
+    fireEvent.click(screen.getByRole('tab', { name: /Gallery \(1\)/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Saved')).toBeInTheDocument();
+    });
   });
 });

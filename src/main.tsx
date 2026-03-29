@@ -5,14 +5,17 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppShell } from './shell/AppShell';
 import './styles.css';
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <AppShell />,
+    },
+  ],
   {
-    path: '/',
-    element: <AppShell />,
+    basename: '/Dollify',
   },
-], {
-  basename: '/Dollify',
-});
+);
 
 const rootElement = document.getElementById('root');
 

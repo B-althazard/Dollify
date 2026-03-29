@@ -7,21 +7,33 @@ import type { PromptPackage } from '../prompt/engine';
 import type { PromptConfig } from '../schema/contracts';
 
 interface PromptStudioCardProps {
+  bridgeConnected: boolean;
   config: PromptConfig;
+  galleryCount: number;
+  presetCount: number;
   promptPackage: PromptPackage | null;
   stale: boolean;
   onOpenConfig: () => void;
+  onOpenLibrary: () => void;
   onOpenPackage: () => void;
   onCopy: () => void;
+  onSavePreset: () => void;
+  onSendToBridge: () => void;
 }
 
 export function PromptStudioCard({
+  bridgeConnected,
   config,
+  galleryCount,
+  presetCount,
   promptPackage,
   stale,
   onOpenConfig,
+  onOpenLibrary,
   onOpenPackage,
   onCopy,
+  onSavePreset,
+  onSendToBridge,
 }: PromptStudioCardProps) {
   const model = getPromptModelProfile(config.modelId);
   const ratio = aspectRatioOptions.find(
@@ -68,6 +80,18 @@ export function PromptStudioCard({
               : 'Optional polish is off'}
           </span>
         </article>
+        <article>
+          <strong>{presetCount} presets</strong>
+          <span>One-tap creator recalls</span>
+        </article>
+        <article>
+          <strong>{galleryCount} gallery items</strong>
+          <span>
+            {bridgeConnected
+              ? 'Bridge is listening'
+              : 'Bridge not detected yet'}
+          </span>
+        </article>
       </div>
 
       <div className="prompt-studio-actions">
@@ -93,6 +117,23 @@ export function PromptStudioCard({
           disabled={!promptPackage}
         >
           Review package
+        </button>
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={onSavePreset}
+        >
+          Save preset
+        </button>
+        <button type="button" className="ghost-button" onClick={onOpenLibrary}>
+          Open vault
+        </button>
+        <button
+          type="button"
+          className="primary-button"
+          onClick={onSendToBridge}
+        >
+          Send to Venice
         </button>
       </div>
     </section>

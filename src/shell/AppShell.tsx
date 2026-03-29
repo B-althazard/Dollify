@@ -1,7 +1,19 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useReducedMotion } from 'motion/react';
-import { useMemo, useState } from 'react';
-import { useCreatorStore } from '../features/creator/store';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type BridgeErrorDetail,
+  type BridgeResultDetail,
+  type BridgeStatusDetail,
+  buildBridgeGenerateDetail,
+  createBridgeNonce,
+  dispatchBridgeGenerate,
+} from '../features/bridge/events';
+import {
+  getCreatorStoreSnapshot,
+  useCreatorStore,
+} from '../features/creator/store';
+import { useLibraryStore } from '../features/library/store';
 import {
   buildPromptPackage,
   buildPromptSignature,
@@ -11,11 +23,13 @@ import { getVisibleFieldsForCategory } from '../features/rules/engine';
 import { getCreatorSchema, getFieldById } from '../features/schema/registry';
 import { BottomSheet } from '../features/ui/BottomSheet';
 import { CategoryRail } from '../features/ui/CategoryRail';
+import { PresetStrip } from '../features/ui/PresetStrip';
 import { PromptConfigSheet } from '../features/ui/PromptConfigSheet';
 import { PromptPackagePanel } from '../features/ui/PromptPackagePanel';
 import { PromptStudioCard } from '../features/ui/PromptStudioCard';
 import { RuleNotice } from '../features/ui/RuleNotice';
 import { SchemaSection } from '../features/ui/SchemaSection';
+import { StudioLibrarySheet } from '../features/ui/StudioLibrarySheet';
 import { useSwipeNavigation } from '../features/ui/useSwipeNavigation';
 
 const schema = getCreatorSchema();
@@ -34,6 +48,7 @@ export function AppShell() {
   const reducedMotion = useReducedMotion();
   const {
     activeCategoryId,
+    applySnapshot,
     detailSheetFieldId,
     derived,
     fieldLocks,
@@ -52,9 +67,28 @@ export function AppShell() {
   const [promptPackage, setPromptPackage] = useState<PromptPackage | null>(
     null,
   );
+  const [libraryOpen, setLibraryOpen] = useState(false);
   const [promptConfigOpen, setPromptConfigOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [toast, setToast] = useState<ToastState>(null);
+  const bridge = useLibraryStore((state) => state.bridge);
+  const gallery = useLibraryStore((state) => state.gallery);
+  const presets = useLibraryStore((state) => state.presets);
+  const completeBridgeJob = useLibraryStore((state) => state.completeBridgeJob);
+  const failLatestBridgeJob = useLibraryStore(
+    (state) => state.failLatestBridgeJob,
+  );
+  const markBridgeConnected = useLibraryStore(
+    (state) => state.markBridgeConnected,
+  );
+  const markBridgeProcessing = useLibraryStore(
+    (state) => state.markBridgeProcessing,
+  );
+  const queueBridgeJob = useLibraryStore((state) => state.queueBridgeJob);
+  const savePreset = useLibraryStore((state) => state.savePreset);
+  const updateBridgeStatus = useLibraryStore(
+    (state) => state.updateBridgeStatus,
+  );
 
   const activeCategory =
     schema.categories.find((category) => category.id === activeCategoryId) ??
@@ -78,7 +112,7 @@ export function AppShell() {
     onNavigate: setActiveCategory,
   });
 
-  const showToast = (nextToast: ToastState) => {
+  const showToast = useCallback((nextToast: ToastState) => {
     setToast(nextToast);
 
     if (nextToast) {
@@ -88,7 +122,75 @@ export function AppShell() {
         );
       }, 1800);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const handleBridgeReady = () => {
+      markBridgeConnected();
+    };
+
+    const handleBridgeHeartbeat = () => {
+      markBridgeConnected();
+    };
+
+    const handleBridgeStatus = (event: Event) => {
+      const detail = (event as CustomEvent<BridgeStatusDetail>).detail;
+      updateBridgeStatus(detail?.status, detail?.detail, detail?.connected);
+
+      if (detail?.status) {
+        markBridgeProcessing(detail.status, detail.detail);
+      }
+    };
+
+    const handleBridgeImage = (event: Event) => {
+      const detail = (event as CustomEvent<BridgeResultDetail>).detail;
+
+      if (!detail?.nonce || !detail.dataUrl) {
+        return;
+      }
+
+      completeBridgeJob(detail.nonce, detail.dataUrl);
+      showToast({
+        tone: 'success',
+        message: 'Venice render saved to gallery.',
+      });
+    };
+
+    const handleBridgeError = (event: Event) => {
+      const detail = (event as CustomEvent<BridgeErrorDetail>).detail;
+      failLatestBridgeJob(
+        detail?.message ?? 'Bridge reported an unknown error.',
+      );
+      showToast({
+        tone: 'danger',
+        message: detail?.message ?? 'Bridge reported an unknown error.',
+      });
+    };
+
+    window.addEventListener('xgen:bridge-ready', handleBridgeReady);
+    window.addEventListener('xgen:bridge-heartbeat', handleBridgeHeartbeat);
+    window.addEventListener('xgen:status-update', handleBridgeStatus);
+    window.addEventListener('xgen:image-received', handleBridgeImage);
+    window.addEventListener('xgen:generation-error', handleBridgeError);
+
+    return () => {
+      window.removeEventListener('xgen:bridge-ready', handleBridgeReady);
+      window.removeEventListener(
+        'xgen:bridge-heartbeat',
+        handleBridgeHeartbeat,
+      );
+      window.removeEventListener('xgen:status-update', handleBridgeStatus);
+      window.removeEventListener('xgen:image-received', handleBridgeImage);
+      window.removeEventListener('xgen:generation-error', handleBridgeError);
+    };
+  }, [
+    completeBridgeJob,
+    failLatestBridgeJob,
+    markBridgeConnected,
+    markBridgeProcessing,
+    showToast,
+    updateBridgeStatus,
+  ]);
 
   const generatePackage = () => {
     const nextPackage = buildPromptPackage(schema, derived, promptConfig);
@@ -138,6 +240,62 @@ export function AppShell() {
 
     setPromptPackage(nextPackage);
     await handleCopyPackage('auto', nextPackage);
+  };
+
+  const handleSavePreset = () => {
+    const nextPackage =
+      !promptPackage || packageIsStale ? generatePackage() : promptPackage;
+    const snapshot = getCreatorStoreSnapshot(useCreatorStore.getState());
+    const preset = savePreset(snapshot, nextPackage);
+
+    showToast({
+      tone: 'success',
+      message: `${preset.name} saved to your vault.`,
+    });
+  };
+
+  const handleLoadPreset = (presetId: string) => {
+    const preset = presets.find((entry) => entry.id === presetId);
+
+    if (!preset) {
+      return;
+    }
+
+    applySnapshot(preset.snapshot);
+    setLibraryOpen(false);
+    showToast({ tone: 'success', message: `${preset.name} restored.` });
+  };
+
+  const handleLoadGalleryEntry = (entryId: string) => {
+    const entry = gallery.find((item) => item.id === entryId);
+
+    if (!entry) {
+      return;
+    }
+
+    applySnapshot(entry.snapshot);
+    setLibraryOpen(false);
+    showToast({ tone: 'success', message: 'Generation state restored.' });
+  };
+
+  const handleSendToBridge = () => {
+    const nextPackage =
+      !promptPackage || packageIsStale ? generatePackage() : promptPackage;
+    const snapshot = getCreatorStoreSnapshot(useCreatorStore.getState());
+    const nonce = createBridgeNonce();
+
+    queueBridgeJob(snapshot, nextPackage, nonce);
+
+    const wasDispatched = dispatchBridgeGenerate(
+      buildBridgeGenerateDetail(snapshot, nextPackage, nonce),
+    );
+
+    showToast({
+      tone: wasDispatched ? 'success' : 'danger',
+      message: wasDispatched
+        ? 'Prompt sent to the Venice bridge.'
+        : 'Bridge dispatch failed in this environment.',
+    });
   };
 
   return (
@@ -191,6 +349,12 @@ export function AppShell() {
           <RuleNotice>{derived.notices[0]}</RuleNotice>
         ) : null}
 
+        <PresetStrip
+          presets={presets.slice(0, 6)}
+          onLoadPreset={handleLoadPreset}
+          onOpenLibrary={() => setLibraryOpen(true)}
+        />
+
         <SchemaSection
           category={activeCategory}
           fields={visibleFields}
@@ -205,14 +369,20 @@ export function AppShell() {
         />
 
         <PromptStudioCard
+          bridgeConnected={bridge.connected}
           config={promptConfig}
+          galleryCount={gallery.length}
+          presetCount={presets.length}
           promptPackage={promptPackage}
           stale={Boolean(promptPackage) && packageIsStale}
           onOpenConfig={() => setPromptConfigOpen(true)}
+          onOpenLibrary={() => setLibraryOpen(true)}
           onOpenPackage={() => setReviewOpen(true)}
           onCopy={() => {
             void handleCopyPackage('manual');
           }}
+          onSavePreset={handleSavePreset}
+          onSendToBridge={handleSendToBridge}
         />
 
         <footer className="bottom-action-bar">
@@ -266,6 +436,16 @@ export function AppShell() {
           config={promptConfig}
           onOpenChange={setPromptConfigOpen}
           onChange={setPromptConfig}
+        />
+
+        <StudioLibrarySheet
+          open={libraryOpen}
+          presets={presets}
+          gallery={gallery}
+          bridge={bridge}
+          onOpenChange={setLibraryOpen}
+          onLoadPreset={handleLoadPreset}
+          onLoadGalleryEntry={handleLoadGalleryEntry}
         />
 
         <Dialog.Root open={reviewOpen} onOpenChange={setReviewOpen}>
