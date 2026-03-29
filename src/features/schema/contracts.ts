@@ -15,6 +15,14 @@ const optionSchema = z.object({
   description: z.string().optional(),
   tone: z.enum(['default', 'accent', 'warm']).optional(),
   badge: z.string().optional(),
+  promptToken: z.string().optional(),
+  summaryLabel: z.string().optional(),
+});
+
+export const promptConfigSchema = z.object({
+  modelId: z.string(),
+  aspectRatio: z.string(),
+  styleIds: z.array(z.string()),
 });
 
 const fieldSchema = z.object({
@@ -58,6 +66,8 @@ export const creatorSnapshotSchema = z.object({
   mode: creatorModeSchema,
   activeCategoryId: z.string(),
   formValues: z.record(z.string(), z.array(z.string())),
+  fieldLocks: z.record(z.string(), z.boolean()),
+  promptConfig: promptConfigSchema,
 });
 
 export type CreatorMode = z.infer<typeof creatorModeSchema>;
@@ -66,4 +76,5 @@ export type CreatorCategory = CreatorSchemaDocument['categories'][number];
 export type CreatorField = CreatorSchemaDocument['fields'][number];
 export type CreatorCondition = z.infer<typeof conditionSchema>;
 export type CreatorOption = z.infer<typeof optionSchema>;
+export type PromptConfig = z.infer<typeof promptConfigSchema>;
 export type CreatorSnapshot = z.infer<typeof creatorSnapshotSchema>;

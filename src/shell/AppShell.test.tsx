@@ -20,6 +20,11 @@ describe('AppShell', () => {
     expect(
       screen.getByRole('heading', { name: 'Persona direction' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Randomize' })).toBeDisabled();
+    expect(
+      screen.getByRole('heading', { name: 'Package-ready output' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Generate package' }),
+    ).toBeEnabled();
   });
 });

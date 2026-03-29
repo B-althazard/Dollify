@@ -43,13 +43,17 @@
           "id": "female",
           "label": "Female",
           "description": "Cis-female creator path.",
-          "tone": "accent"
+          "tone": "accent",
+          "promptToken": "female subject",
+          "summaryLabel": "Female"
         },
         {
           "id": "futa",
           "label": "Futa-Female",
           "description": "Futa-female creator path.",
-          "tone": "warm"
+          "tone": "warm",
+          "promptToken": "futa-female subject",
+          "summaryLabel": "Futa-Female"
         }
       ]
     },
@@ -66,12 +70,34 @@
         {
           "id": "editorial-muse",
           "label": "Editorial Muse",
-          "badge": "Default"
+          "badge": "Default",
+          "promptToken": "editorial muse persona",
+          "summaryLabel": "Editorial Muse"
         },
-        { "id": "girl-next-door", "label": "Girl Next Door" },
-        { "id": "dominant-star", "label": "Dominant Star" },
-        { "id": "glam-athlete", "label": "Glam Athlete" },
-        { "id": "luxury-babe", "label": "Luxury Babe" }
+        {
+          "id": "girl-next-door",
+          "label": "Girl Next Door",
+          "promptToken": "girl-next-door warmth",
+          "summaryLabel": "Girl Next Door"
+        },
+        {
+          "id": "dominant-star",
+          "label": "Dominant Star",
+          "promptToken": "dominant star confidence",
+          "summaryLabel": "Dominant Star"
+        },
+        {
+          "id": "glam-athlete",
+          "label": "Glam Athlete",
+          "promptToken": "glam athlete energy",
+          "summaryLabel": "Glam Athlete"
+        },
+        {
+          "id": "luxury-babe",
+          "label": "Luxury Babe",
+          "promptToken": "luxury babe glamour",
+          "summaryLabel": "Luxury Babe"
+        }
       ]
     },
     {
@@ -84,10 +110,30 @@
       "defaultValue": ["hourglass"],
       "required": true,
       "options": [
-        { "id": "petite", "label": "Petite" },
-        { "id": "hourglass", "label": "Hourglass" },
-        { "id": "athletic", "label": "Athletic" },
-        { "id": "plush-curves", "label": "Plush Curves" }
+        {
+          "id": "petite",
+          "label": "Petite",
+          "promptToken": "petite frame",
+          "summaryLabel": "Petite"
+        },
+        {
+          "id": "hourglass",
+          "label": "Hourglass",
+          "promptToken": "hourglass silhouette",
+          "summaryLabel": "Hourglass"
+        },
+        {
+          "id": "athletic",
+          "label": "Athletic",
+          "promptToken": "athletic build",
+          "summaryLabel": "Athletic"
+        },
+        {
+          "id": "plush-curves",
+          "label": "Plush Curves",
+          "promptToken": "plush curves",
+          "summaryLabel": "Plush Curves"
+        }
       ]
     },
     {
@@ -100,10 +146,30 @@
       "defaultValue": ["soft-waist"],
       "maxSelections": 2,
       "options": [
-        { "id": "soft-waist", "label": "Soft waist" },
-        { "id": "long-legs", "label": "Long legs" },
-        { "id": "full-bust", "label": "Full bust" },
-        { "id": "toned-core", "label": "Toned core" }
+        {
+          "id": "soft-waist",
+          "label": "Soft waist",
+          "promptToken": "soft waist",
+          "summaryLabel": "Soft waist"
+        },
+        {
+          "id": "long-legs",
+          "label": "Long legs",
+          "promptToken": "long legs",
+          "summaryLabel": "Long legs"
+        },
+        {
+          "id": "full-bust",
+          "label": "Full bust",
+          "promptToken": "full bust",
+          "summaryLabel": "Full bust"
+        },
+        {
+          "id": "toned-core",
+          "label": "Toned core",
+          "promptToken": "toned core",
+          "summaryLabel": "Toned core"
+        }
       ]
     },
     {
@@ -123,9 +189,24 @@
         "equals": "futa"
       },
       "options": [
-        { "id": "refined", "label": "Refined" },
-        { "id": "balanced", "label": "Balanced" },
-        { "id": "prominent", "label": "Prominent" }
+        {
+          "id": "refined",
+          "label": "Refined",
+          "promptToken": "refined appendage styling",
+          "summaryLabel": "Refined"
+        },
+        {
+          "id": "balanced",
+          "label": "Balanced",
+          "promptToken": "balanced appendage styling",
+          "summaryLabel": "Balanced"
+        },
+        {
+          "id": "prominent",
+          "label": "Prominent",
+          "promptToken": "prominent appendage styling",
+          "summaryLabel": "Prominent"
+        }
       ]
     },
     {
@@ -138,10 +219,30 @@
       "defaultValue": ["inviting"],
       "required": true,
       "options": [
-        { "id": "inviting", "label": "Inviting" },
-        { "id": "smoldering", "label": "Smoldering" },
-        { "id": "playful", "label": "Playful" },
-        { "id": "serene", "label": "Serene" }
+        {
+          "id": "inviting",
+          "label": "Inviting",
+          "promptToken": "inviting expression",
+          "summaryLabel": "Inviting"
+        },
+        {
+          "id": "smoldering",
+          "label": "Smoldering",
+          "promptToken": "smoldering expression",
+          "summaryLabel": "Smoldering"
+        },
+        {
+          "id": "playful",
+          "label": "Playful",
+          "promptToken": "playful expression",
+          "summaryLabel": "Playful"
+        },
+        {
+          "id": "serene",
+          "label": "Serene",
+          "promptToken": "serene expression",
+          "summaryLabel": "Serene"
+        }
       ]
     },
     {
@@ -161,9 +262,24 @@
         "reason": "Glam Athlete keeps makeup restrained in Phase 1."
       },
       "options": [
-        { "id": "soft-glam", "label": "Soft glam" },
-        { "id": "editorial-clean", "label": "Editorial clean" },
-        { "id": "wet-glow", "label": "Wet glow" }
+        {
+          "id": "soft-glam",
+          "label": "Soft glam",
+          "promptToken": "soft glam makeup",
+          "summaryLabel": "Soft glam"
+        },
+        {
+          "id": "editorial-clean",
+          "label": "Editorial clean",
+          "promptToken": "editorial clean finish",
+          "summaryLabel": "Editorial clean"
+        },
+        {
+          "id": "wet-glow",
+          "label": "Wet glow",
+          "promptToken": "wet glow finish",
+          "summaryLabel": "Wet glow"
+        }
       ]
     },
     {
@@ -176,12 +292,42 @@
       "defaultValue": ["silk-robe"],
       "required": true,
       "options": [
-        { "id": "silk-robe", "label": "Silk robe" },
-        { "id": "lingerie-set", "label": "Lingerie set" },
-        { "id": "clubwear", "label": "Clubwear" },
-        { "id": "swimwear", "label": "Swimwear" },
-        { "id": "sheer-lounge", "label": "Sheer lounge" },
-        { "id": "athleisure", "label": "Athleisure" }
+        {
+          "id": "silk-robe",
+          "label": "Silk robe",
+          "promptToken": "silk robe styling",
+          "summaryLabel": "Silk robe"
+        },
+        {
+          "id": "lingerie-set",
+          "label": "Lingerie set",
+          "promptToken": "lingerie set styling",
+          "summaryLabel": "Lingerie set"
+        },
+        {
+          "id": "clubwear",
+          "label": "Clubwear",
+          "promptToken": "clubwear styling",
+          "summaryLabel": "Clubwear"
+        },
+        {
+          "id": "swimwear",
+          "label": "Swimwear",
+          "promptToken": "swimwear styling",
+          "summaryLabel": "Swimwear"
+        },
+        {
+          "id": "sheer-lounge",
+          "label": "Sheer lounge",
+          "promptToken": "sheer lounge styling",
+          "summaryLabel": "Sheer lounge"
+        },
+        {
+          "id": "athleisure",
+          "label": "Athleisure",
+          "promptToken": "athleisure styling",
+          "summaryLabel": "Athleisure"
+        }
       ]
     },
     {
@@ -194,10 +340,30 @@
       "defaultValue": ["vanity-suite"],
       "maxSelections": 2,
       "options": [
-        { "id": "vanity-suite", "label": "Vanity suite" },
-        { "id": "sunlit-loft", "label": "Sunlit loft" },
-        { "id": "moody-club", "label": "Moody club" },
-        { "id": "poolside", "label": "Poolside" }
+        {
+          "id": "vanity-suite",
+          "label": "Vanity suite",
+          "promptToken": "vanity suite backdrop",
+          "summaryLabel": "Vanity suite"
+        },
+        {
+          "id": "sunlit-loft",
+          "label": "Sunlit loft",
+          "promptToken": "sunlit loft backdrop",
+          "summaryLabel": "Sunlit loft"
+        },
+        {
+          "id": "moody-club",
+          "label": "Moody club",
+          "promptToken": "moody club backdrop",
+          "summaryLabel": "Moody club"
+        },
+        {
+          "id": "poolside",
+          "label": "Poolside",
+          "promptToken": "poolside backdrop",
+          "summaryLabel": "Poolside"
+        }
       ]
     }
   ]

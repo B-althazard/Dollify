@@ -9,8 +9,10 @@ interface SchemaSectionProps {
   category: CreatorCategory;
   fields: CreatorField[];
   derived: EvaluatedCreatorState;
+  fieldLocks: Record<string, boolean>;
   formValues: Record<string, string[]>;
   onChangeField: (fieldId: string, values: string[]) => void;
+  onToggleFieldLock: (fieldId: string) => void;
   onOpenSheet: (fieldId: string) => void;
   reducedMotion: boolean;
   swipeHandlers: {
@@ -23,8 +25,10 @@ export function SchemaSection({
   category,
   fields,
   derived,
+  fieldLocks,
   formValues,
   onChangeField,
+  onToggleFieldLock,
   onOpenSheet,
   reducedMotion,
   swipeHandlers,
@@ -62,7 +66,9 @@ export function SchemaSection({
           field={field}
           state={derived.fieldStates[field.id]}
           values={formValues[field.id] ?? []}
+          locked={Boolean(fieldLocks[field.id])}
           onChange={(values) => onChangeField(field.id, values)}
+          onToggleLock={() => onToggleFieldLock(field.id)}
           onOpenSheet={
             field.type === 'sheet-select'
               ? () => onOpenSheet(field.id)

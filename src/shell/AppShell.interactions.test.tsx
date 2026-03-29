@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
 import { useCreatorStore } from '../features/creator/store';
 import { AppShell } from './AppShell';
@@ -15,6 +16,11 @@ function swipeLeft(element: HTMLElement) {
 describe('AppShell mobile interactions', () => {
   beforeEach(() => {
     useCreatorStore.getState().resetCreator();
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: vi.fn().mockResolvedValue(undefined),
+      },
+    });
   });
 
   it('navigates categories with horizontal swipe intent', () => {
@@ -36,5 +42,18 @@ describe('AppShell mobile interactions', () => {
     expect(
       screen.getByRole('heading', { name: 'Appendage styling' }),
     ).toBeInTheDocument();
+  });
+
+  it('generates a prompt package and opens review output', async () => {
+    render(<AppShell />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Generate package' }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('heading', { name: 'Positive prompt' }),
+      ).toBeInTheDocument();
+    });
+    expect(navigator.clipboard.writeText).toHaveBeenCalled();
   });
 });

@@ -9,5 +9,7 @@ describe('creator store defaults', () => {
     expect(snapshot.activeCategoryId).toBe('identity');
     expect(snapshot.formValues['identity.mode']).toEqual(['female']);
     expect(snapshot.formValues['physique.frame']).toEqual(['hourglass']);
+    expect(snapshot.fieldLocks).toEqual({});
+    expect(snapshot.promptConfig.modelId).toBe('velvet-realism');
   });
 });

@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { getDefaultPromptConfig } from '../prompt/catalog';
+import { randomizeCreatorSnapshot } from '../randomize/engine';
 import {
   type EvaluatedCreatorState,
   evaluateCreatorState,
@@ -19,6 +21,8 @@ function buildDefaultSnapshot(): CreatorSnapshot {
     mode: 'female',
     activeCategoryId: getSchemaCategoryIds()[0],
     formValues,
+    fieldLocks: {},
+    promptConfig: getDefaultPromptConfig(),
   };
 }
 
@@ -32,7 +36,10 @@ export interface CreatorStoreState extends CreatorSnapshot {
   setMode: (mode: CreatorSnapshot['mode']) => void;
   setActiveCategory: (categoryId: string) => void;
   setFieldValue: (fieldId: string, value: string[]) => void;
+  toggleFieldLock: (fieldId: string) => void;
+  setPromptConfig: (value: Partial<CreatorSnapshot['promptConfig']>) => void;
   openDetailSheet: (fieldId: string | null) => void;
+  randomizeCreator: (rng?: () => number) => void;
   resetCreator: () => void;
 }
 
@@ -42,9 +49,8 @@ const defaultDerived = buildEvaluatedState(defaultSnapshot);
 export const useCreatorStore = create<CreatorStoreState>()(
   persist(
     (set) => ({
+      ...defaultSnapshot,
       ...defaultDerived,
-      version: defaultSnapshot.version,
-      activeCategoryId: defaultSnapshot.activeCategoryId,
       detailSheetFieldId: null,
       derived: defaultDerived,
       setMode: (mode) =>
@@ -54,6 +60,8 @@ export const useCreatorStore = create<CreatorStoreState>()(
             mode,
             activeCategoryId: state.activeCategoryId,
             formValues: { ...state.formValues, 'identity.mode': [mode] },
+            fieldLocks: state.fieldLocks,
+            promptConfig: state.promptConfig,
           };
           const derived = buildEvaluatedState(nextSnapshot);
 
@@ -67,12 +75,52 @@ export const useCreatorStore = create<CreatorStoreState>()(
             mode: state.mode,
             activeCategoryId: state.activeCategoryId,
             formValues: { ...state.formValues, [fieldId]: value },
+            fieldLocks: state.fieldLocks,
+            promptConfig: state.promptConfig,
           };
           const derived = buildEvaluatedState(nextSnapshot);
 
           return { ...nextSnapshot, ...derived, derived };
         }),
+      toggleFieldLock: (fieldId) =>
+        set((state) => ({
+          fieldLocks: {
+            ...state.fieldLocks,
+            [fieldId]: !state.fieldLocks[fieldId],
+          },
+        })),
+      setPromptConfig: (value) =>
+        set((state) => ({
+          promptConfig: {
+            ...state.promptConfig,
+            ...value,
+            styleIds: value.styleIds ?? state.promptConfig.styleIds,
+          },
+        })),
       openDetailSheet: (detailSheetFieldId) => set({ detailSheetFieldId }),
+      randomizeCreator: (rng) =>
+        set((state) => {
+          const nextSnapshot = {
+            version: state.version,
+            mode: state.mode,
+            activeCategoryId: state.activeCategoryId,
+            formValues: state.formValues,
+            fieldLocks: state.fieldLocks,
+            promptConfig: state.promptConfig,
+          };
+          const randomized = randomizeCreatorSnapshot(
+            schema,
+            nextSnapshot,
+            state.derived,
+            { rng },
+          );
+
+          return {
+            ...randomized.snapshot,
+            ...randomized.derived,
+            derived: randomized.derived,
+          };
+        }),
       resetCreator: () =>
         set({
           ...defaultSnapshot,
@@ -95,6 +143,14 @@ export const useCreatorStore = create<CreatorStoreState>()(
           formValues:
             (persistedState as Partial<CreatorSnapshot> | undefined)
               ?.formValues ?? currentState.formValues,
+          fieldLocks:
+            (persistedState as Partial<CreatorSnapshot> | undefined)
+              ?.fieldLocks ?? currentState.fieldLocks,
+          promptConfig: {
+            ...currentState.promptConfig,
+            ...((persistedState as Partial<CreatorSnapshot> | undefined)
+              ?.promptConfig ?? {}),
+          },
         };
         const derived = buildEvaluatedState(nextSnapshot);
 
@@ -110,6 +166,8 @@ export const useCreatorStore = create<CreatorStoreState>()(
         mode: state.mode,
         activeCategoryId: state.activeCategoryId,
         formValues: state.formValues,
+        fieldLocks: state.fieldLocks,
+        promptConfig: state.promptConfig,
       }),
     },
   ),

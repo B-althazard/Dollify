@@ -6,6 +6,7 @@ interface BottomSheetProps {
   field: CreatorField | undefined;
   state: FieldRuleState | undefined;
   values: string[];
+  locked?: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onChange: (values: string[]) => void;
@@ -15,6 +16,7 @@ export function BottomSheet({
   field,
   state,
   values,
+  locked = false,
   open,
   onOpenChange,
   onChange,
@@ -27,17 +29,14 @@ export function BottomSheet({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="sheet-overlay" />
-        <Dialog.Content
-          className="bottom-sheet"
-          aria-describedby={`${field.id}-sheet-description`}
-        >
+        <Dialog.Content className="bottom-sheet" aria-describedby={undefined}>
           <div className="sheet-handle" />
           <div className="sheet-header">
             <div>
               <Dialog.Title>{field.label}</Dialog.Title>
-              <Dialog.Description id={`${field.id}-sheet-description`}>
+              <p id={`${field.id}-sheet-description`}>
                 {field.helperText ?? field.description}
-              </Dialog.Description>
+              </p>
             </div>
             <Dialog.Close className="sheet-close">Close</Dialog.Close>
           </div>
@@ -55,7 +54,7 @@ export function BottomSheet({
                     onChange([option.id]);
                     onOpenChange(false);
                   }}
-                  disabled={state.disabled}
+                  disabled={state.disabled || locked}
                 >
                   <strong>{option.label}</strong>
                   {option.description ? (

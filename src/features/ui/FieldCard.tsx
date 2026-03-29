@@ -8,7 +8,9 @@ interface FieldCardProps {
   field: CreatorField;
   state: FieldRuleState;
   values: string[];
+  locked: boolean;
   onChange: (values: string[]) => void;
+  onToggleLock: () => void;
   onOpenSheet?: () => void;
 }
 
@@ -16,7 +18,9 @@ export function FieldCard({
   field,
   state,
   values,
+  locked,
   onChange,
+  onToggleLock,
   onOpenSheet,
 }: FieldCardProps) {
   return (
@@ -27,6 +31,14 @@ export function FieldCard({
           <h3>{field.label}</h3>
         </div>
         <div className="field-card__meta">
+          <button
+            type="button"
+            className={`lock-button ${locked ? 'is-locked' : ''}`}
+            onClick={onToggleLock}
+            aria-pressed={locked}
+          >
+            {locked ? 'Locked' : 'Unlocked'}
+          </button>
           {state.required ? (
             <span className="field-badge">Required</span>
           ) : null}
@@ -47,6 +59,7 @@ export function FieldCard({
         field={field}
         state={state}
         values={values}
+        locked={locked}
         onChange={onChange}
         onOpenSheet={onOpenSheet}
       />

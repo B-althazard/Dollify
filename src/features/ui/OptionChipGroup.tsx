@@ -5,6 +5,7 @@ interface OptionChipGroupProps {
   field: CreatorField;
   state: FieldRuleState;
   values: string[];
+  locked: boolean;
   onChange: (values: string[]) => void;
   onOpenSheet?: () => void;
 }
@@ -13,11 +14,12 @@ export function OptionChipGroup({
   field,
   state,
   values,
+  locked,
   onChange,
   onOpenSheet,
 }: OptionChipGroupProps) {
   const handleSelect = (optionId: string) => {
-    if (state.disabled) {
+    if (state.disabled || locked) {
       return;
     }
 
@@ -48,7 +50,7 @@ export function OptionChipGroup({
                 type="button"
                 className={`option-chip ${selected ? 'is-selected' : ''}`}
                 onClick={() => handleSelect(option.id)}
-                disabled={state.disabled}
+                disabled={state.disabled || locked}
                 aria-pressed={selected}
               >
                 <span>{option.label}</span>
@@ -59,7 +61,12 @@ export function OptionChipGroup({
       </fieldset>
 
       {field.type === 'sheet-select' ? (
-        <button type="button" className="sheet-trigger" onClick={onOpenSheet}>
+        <button
+          type="button"
+          className="sheet-trigger"
+          onClick={onOpenSheet}
+          disabled={state.disabled || locked}
+        >
           Browse all options
         </button>
       ) : null}
