@@ -1,4 +1,31 @@
+import { getFieldById, getCreatorSchema } from '../features/schema/registry';
+import { getVisibleFieldsForCategory } from '../features/rules/engine';
+import { useCreatorStore } from '../features/creator/store';
+import { BottomSheet } from '../features/ui/BottomSheet';
+import { CategoryRail } from '../features/ui/CategoryRail';
+import { RuleNotice } from '../features/ui/RuleNotice';
+import { SchemaSection } from '../features/ui/SchemaSection';
+
+const schema = getCreatorSchema();
+
 export function AppShell() {
+  const {
+    activeCategoryId,
+    detailSheetFieldId,
+    derived,
+    formValues,
+    mode,
+    openDetailSheet,
+    resetCreator,
+    setActiveCategory,
+    setFieldValue,
+    setMode,
+  } = useCreatorStore();
+
+  const activeCategory = schema.categories.find((category) => category.id === activeCategoryId) ?? schema.categories[0];
+  const visibleFields = getVisibleFieldsForCategory(schema, derived, activeCategory.id);
+  const sheetField = detailSheetFieldId ? getFieldById(detailSheetFieldId) : undefined;
+
   return (
     <main className="app-frame">
       <div className="app-shell">
@@ -8,28 +35,60 @@ export function AppShell() {
             <h1>Dollify</h1>
           </div>
           <div className="status-cluster">
-            <span className="mode-pill">Female + Futa-Female</span>
-            <span className="validity-pill">Foundations in progress</span>
+            <div className="mode-switch" role="group" aria-label="Creator mode">
+              <button
+                type="button"
+                className={`mode-pill ${mode === 'female' ? 'is-active' : ''}`}
+                onClick={() => setMode('female')}
+              >
+                Female
+              </button>
+              <button
+                type="button"
+                className={`mode-pill ${mode === 'futa' ? 'is-active' : ''}`}
+                onClick={() => setMode('futa')}
+              >
+                Futa-Female
+              </button>
+            </div>
+            <span className={`validity-pill ${derived.isValid ? 'is-valid' : 'is-conflict'}`}>
+              {derived.isValid ? 'Valid creator state' : 'Resolve required selections'}
+            </span>
           </div>
         </header>
 
+        <CategoryRail
+          categories={schema.categories}
+          activeCategoryId={activeCategory.id}
+          derived={derived}
+          onSelect={setActiveCategory}
+        />
+
         <section className="creator-placeholder card-surface">
           <p className="section-label">Creator shell</p>
-          <h2>Phone-first workspace scaffold</h2>
-          <p>
-            The Phase 1 shell reserves space for schema categories, rule-aware controls,
-            and touch-safe actions without introducing free-text input.
-          </p>
+          <h2>{activeCategory.label}</h2>
+          <p>{activeCategory.description}</p>
         </section>
+
+        {derived.notices.length > 0 ? <RuleNotice>{derived.notices[0]}</RuleNotice> : null}
+
+        <SchemaSection
+          category={activeCategory}
+          fields={visibleFields}
+          derived={derived}
+          formValues={formValues}
+          onChangeField={setFieldValue}
+          onOpenSheet={(fieldId) => openDetailSheet(fieldId)}
+        />
 
         <section className="placeholder-grid">
           <article className="card-surface">
             <p className="section-label">Status area</p>
-            <p>Compact progress, mode chips, and validation will live here.</p>
+            <p>{derived.categoryStates[activeCategory.id].visibleFieldIds.length} fields are active in this category.</p>
           </article>
           <article className="card-surface">
-            <p className="section-label">Category rail</p>
-            <p>Swipe and tap category navigation is staged for the creator body.</p>
+            <p className="section-label">Rule state</p>
+            <p>{derived.isValid ? 'All visible required selections are satisfied.' : 'Some visible fields still need a selection.'}</p>
           </article>
         </section>
 
@@ -37,13 +96,26 @@ export function AppShell() {
           <button type="button" className="ghost-button" disabled>
             Randomize
           </button>
-          <button type="button" className="secondary-button" disabled>
+          <button type="button" className="secondary-button" onClick={resetCreator}>
             Reset
           </button>
-          <button type="button" className="primary-button" disabled>
-            Continue
+          <button type="button" className="primary-button" disabled={!derived.isValid}>
+            Review
           </button>
         </footer>
+
+        <BottomSheet
+          field={sheetField}
+          state={sheetField ? derived.fieldStates[sheetField.id] : undefined}
+          values={sheetField ? formValues[sheetField.id] ?? [] : []}
+          open={Boolean(sheetField)}
+          onOpenChange={(open) => openDetailSheet(open ? detailSheetFieldId : null)}
+          onChange={(values) => {
+            if (sheetField) {
+              setFieldValue(sheetField.id, values);
+            }
+          }}
+        />
       </div>
     </main>
   );
