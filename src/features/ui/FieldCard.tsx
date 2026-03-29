@@ -1,5 +1,5 @@
-import type { CreatorField } from '../schema/contracts';
 import type { FieldRuleState } from '../rules/engine';
+import type { CreatorField } from '../schema/contracts';
 
 import { OptionChipGroup } from './OptionChipGroup';
 import { RuleNotice } from './RuleNotice';
@@ -12,7 +12,13 @@ interface FieldCardProps {
   onOpenSheet?: () => void;
 }
 
-export function FieldCard({ field, state, values, onChange, onOpenSheet }: FieldCardProps) {
+export function FieldCard({
+  field,
+  state,
+  values,
+  onChange,
+  onOpenSheet,
+}: FieldCardProps) {
   return (
     <article className="field-card card-surface">
       <div className="field-card__header">
@@ -21,15 +27,21 @@ export function FieldCard({ field, state, values, onChange, onOpenSheet }: Field
           <h3>{field.label}</h3>
         </div>
         <div className="field-card__meta">
-          {state.required ? <span className="field-badge">Required</span> : null}
+          {state.required ? (
+            <span className="field-badge">Required</span>
+          ) : null}
           {state.maxSelections ? (
-            <span className="field-badge">{state.selectedCount} of {state.maxSelections}</span>
+            <span className="field-badge">
+              {state.selectedCount} of {state.maxSelections}
+            </span>
           ) : null}
         </div>
       </div>
 
       <p className="field-description">{field.description}</p>
-      {field.helperText ? <p className="field-helper">{field.helperText}</p> : null}
+      {field.helperText ? (
+        <p className="field-helper">{field.helperText}</p>
+      ) : null}
 
       <OptionChipGroup
         field={field}
@@ -39,7 +51,9 @@ export function FieldCard({ field, state, values, onChange, onOpenSheet }: Field
         onOpenSheet={onOpenSheet}
       />
 
-      {state.disabledReason ? <RuleNotice tone="danger">{state.disabledReason}</RuleNotice> : null}
+      {state.disabledReason ? (
+        <RuleNotice tone="danger">{state.disabledReason}</RuleNotice>
+      ) : null}
       {state.issues
         .filter((issue) => issue !== state.disabledReason)
         .map((issue) => (

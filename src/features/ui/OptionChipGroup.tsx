@@ -1,5 +1,5 @@
-import type { CreatorField } from '../schema/contracts';
 import type { FieldRuleState } from '../rules/engine';
+import type { CreatorField } from '../schema/contracts';
 
 interface OptionChipGroupProps {
   field: CreatorField;
@@ -35,25 +35,28 @@ export function OptionChipGroup({
 
   return (
     <div className="chip-group-wrap">
-      <div className="chip-group" role="group" aria-label={field.label}>
-        {field.options.slice(0, field.type === 'sheet-select' ? 3 : field.options.length).map((option) => {
-          const selected = values.includes(option.id);
+      <fieldset className="chip-group">
+        <legend className="sr-only">{field.label}</legend>
+        {field.options
+          .slice(0, field.type === 'sheet-select' ? 3 : field.options.length)
+          .map((option) => {
+            const selected = values.includes(option.id);
 
-          return (
-            <button
-              key={option.id}
-              type="button"
-              className={`option-chip ${selected ? 'is-selected' : ''}`}
-              onClick={() => handleSelect(option.id)}
-              disabled={state.disabled}
-              aria-pressed={selected}
-            >
-              <span>{option.label}</span>
-              {option.badge ? <small>{option.badge}</small> : null}
-            </button>
-          );
-        })}
-      </div>
+            return (
+              <button
+                key={option.id}
+                type="button"
+                className={`option-chip ${selected ? 'is-selected' : ''}`}
+                onClick={() => handleSelect(option.id)}
+                disabled={state.disabled}
+                aria-pressed={selected}
+              >
+                <span>{option.label}</span>
+                {option.badge ? <small>{option.badge}</small> : null}
+              </button>
+            );
+          })}
+      </fieldset>
 
       {field.type === 'sheet-select' ? (
         <button type="button" className="sheet-trigger" onClick={onOpenSheet}>

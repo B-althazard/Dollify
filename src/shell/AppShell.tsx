@@ -1,8 +1,7 @@
 import { useReducedMotion } from 'motion/react';
-
-import { getFieldById, getCreatorSchema } from '../features/schema/registry';
-import { getVisibleFieldsForCategory } from '../features/rules/engine';
 import { useCreatorStore } from '../features/creator/store';
+import { getVisibleFieldsForCategory } from '../features/rules/engine';
+import { getCreatorSchema, getFieldById } from '../features/schema/registry';
 import { BottomSheet } from '../features/ui/BottomSheet';
 import { CategoryRail } from '../features/ui/CategoryRail';
 import { RuleNotice } from '../features/ui/RuleNotice';
@@ -26,9 +25,17 @@ export function AppShell() {
     setMode,
   } = useCreatorStore();
 
-  const activeCategory = schema.categories.find((category) => category.id === activeCategoryId) ?? schema.categories[0];
-  const visibleFields = getVisibleFieldsForCategory(schema, derived, activeCategory.id);
-  const sheetField = detailSheetFieldId ? getFieldById(detailSheetFieldId) : undefined;
+  const activeCategory =
+    schema.categories.find((category) => category.id === activeCategoryId) ??
+    schema.categories[0];
+  const visibleFields = getVisibleFieldsForCategory(
+    schema,
+    derived,
+    activeCategory.id,
+  );
+  const sheetField = detailSheetFieldId
+    ? getFieldById(detailSheetFieldId)
+    : undefined;
   const swipeHandlers = useSwipeNavigation({
     itemIds: schema.categories.map((category) => category.id),
     activeId: activeCategory.id,
@@ -44,7 +51,8 @@ export function AppShell() {
             <h1>Dollify</h1>
           </div>
           <div className="status-cluster">
-            <div className="mode-switch" role="group" aria-label="Creator mode">
+            <fieldset className="mode-switch">
+              <legend className="sr-only">Creator mode</legend>
               <button
                 type="button"
                 className={`mode-pill ${mode === 'female' ? 'is-active' : ''}`}
@@ -59,9 +67,13 @@ export function AppShell() {
               >
                 Futa-Female
               </button>
-            </div>
-            <span className={`validity-pill ${derived.isValid ? 'is-valid' : 'is-conflict'}`}>
-              {derived.isValid ? 'Valid creator state' : 'Resolve required selections'}
+            </fieldset>
+            <span
+              className={`validity-pill ${derived.isValid ? 'is-valid' : 'is-conflict'}`}
+            >
+              {derived.isValid
+                ? 'Valid creator state'
+                : 'Resolve required selections'}
             </span>
           </div>
         </header>
@@ -79,7 +91,9 @@ export function AppShell() {
           <p>{activeCategory.description}</p>
         </section>
 
-        {derived.notices.length > 0 ? <RuleNotice>{derived.notices[0]}</RuleNotice> : null}
+        {derived.notices.length > 0 ? (
+          <RuleNotice>{derived.notices[0]}</RuleNotice>
+        ) : null}
 
         <SchemaSection
           category={activeCategory}
@@ -95,11 +109,18 @@ export function AppShell() {
         <section className="placeholder-grid">
           <article className="card-surface">
             <p className="section-label">Status area</p>
-            <p>{derived.categoryStates[activeCategory.id].visibleFieldIds.length} fields are active in this category.</p>
+            <p>
+              {derived.categoryStates[activeCategory.id].visibleFieldIds.length}{' '}
+              fields are active in this category.
+            </p>
           </article>
           <article className="card-surface">
             <p className="section-label">Rule state</p>
-            <p>{derived.isValid ? 'All visible required selections are satisfied.' : 'Some visible fields still need a selection.'}</p>
+            <p>
+              {derived.isValid
+                ? 'All visible required selections are satisfied.'
+                : 'Some visible fields still need a selection.'}
+            </p>
           </article>
         </section>
 
@@ -107,10 +128,18 @@ export function AppShell() {
           <button type="button" className="ghost-button" disabled>
             Randomize
           </button>
-          <button type="button" className="secondary-button" onClick={resetCreator}>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={resetCreator}
+          >
             Reset
           </button>
-          <button type="button" className="primary-button" disabled={!derived.isValid}>
+          <button
+            type="button"
+            className="primary-button"
+            disabled={!derived.isValid}
+          >
             Review
           </button>
         </footer>
@@ -118,9 +147,11 @@ export function AppShell() {
         <BottomSheet
           field={sheetField}
           state={sheetField ? derived.fieldStates[sheetField.id] : undefined}
-          values={sheetField ? formValues[sheetField.id] ?? [] : []}
+          values={sheetField ? (formValues[sheetField.id] ?? []) : []}
           open={Boolean(sheetField)}
-          onOpenChange={(open) => openDetailSheet(open ? detailSheetFieldId : null)}
+          onOpenChange={(open) =>
+            openDetailSheet(open ? detailSheetFieldId : null)
+          }
           onChange={(values) => {
             if (sheetField) {
               setFieldValue(sheetField.id, values);

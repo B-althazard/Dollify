@@ -29,10 +29,12 @@ const fieldSchema = z.object({
   requiredWhen: conditionSchema.optional(),
   maxSelections: z.number().int().positive().optional(),
   visibleWhen: conditionSchema.optional(),
-  disableWhen: z.object({
-    condition: conditionSchema,
-    reason: z.string(),
-  }).optional(),
+  disableWhen: z
+    .object({
+      condition: conditionSchema,
+      reason: z.string(),
+    })
+    .optional(),
   options: z.array(optionSchema).min(1),
 });
 

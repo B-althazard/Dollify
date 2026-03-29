@@ -1,5 +1,5 @@
+import { type CreatorSchemaDocument, creatorSchemaDocument } from './contracts';
 import schemaJson from './data/creator-schema.v1.json';
-import { creatorSchemaDocument, type CreatorSchemaDocument } from './contracts';
 
 const schema = creatorSchemaDocument.parse(schemaJson);
 

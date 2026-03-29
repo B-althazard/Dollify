@@ -22,7 +22,9 @@ describe('AppShell mobile interactions', () => {
 
     swipeLeft(screen.getByTestId('swipe-surface'));
 
-    expect(screen.getAllByRole('heading', { name: 'Physique' }).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByRole('heading', { name: 'Physique' }).length,
+    ).toBeGreaterThan(0);
   });
 
   it('lets users toggle into the futa mode and reveals dependent anatomy fields', () => {
@@ -31,6 +33,8 @@ describe('AppShell mobile interactions', () => {
     fireEvent.click(screen.getAllByRole('button', { name: 'Futa-Female' })[0]);
     fireEvent.click(screen.getByRole('button', { name: /Physique/i }));
 
-    expect(screen.getByRole('heading', { name: 'Appendage styling' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Appendage styling' }),
+    ).toBeInTheDocument();
   });
 });

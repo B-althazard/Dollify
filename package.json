@@ -9,8 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "biome check .",
-    "format": "biome check --write ."
+    "lint": "biome check src docs vite.config.ts biome.json package.json index.html tsconfig.json tsconfig.app.json tsconfig.node.json",
+    "format": "biome check --write src docs vite.config.ts biome.json package.json index.html tsconfig.json tsconfig.app.json tsconfig.node.json"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

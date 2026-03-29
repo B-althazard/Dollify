@@ -1,9 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
+import {
+  type EvaluatedCreatorState,
+  evaluateCreatorState,
+} from '../rules/engine';
 import type { CreatorSnapshot } from '../schema/contracts';
 import { getCreatorSchema, getSchemaCategoryIds } from '../schema/registry';
-import { evaluateCreatorState, type EvaluatedCreatorState } from '../rules/engine';
 
 const schema = getCreatorSchema();
 
@@ -71,7 +73,13 @@ export const useCreatorStore = create<CreatorStoreState>()(
           return { ...nextSnapshot, ...derived, derived };
         }),
       openDetailSheet: (detailSheetFieldId) => set({ detailSheetFieldId }),
-      resetCreator: () => set({ ...defaultSnapshot, ...defaultDerived, derived: defaultDerived, detailSheetFieldId: null }),
+      resetCreator: () =>
+        set({
+          ...defaultSnapshot,
+          ...defaultDerived,
+          derived: defaultDerived,
+          detailSheetFieldId: null,
+        }),
     }),
     {
       name: 'dollify-creator-v1',
@@ -79,13 +87,14 @@ export const useCreatorStore = create<CreatorStoreState>()(
         const nextSnapshot = {
           version: currentState.version,
           mode:
-            (persistedState as Partial<CreatorSnapshot> | undefined)?.mode ?? currentState.mode,
+            (persistedState as Partial<CreatorSnapshot> | undefined)?.mode ??
+            currentState.mode,
           activeCategoryId:
-            (persistedState as Partial<CreatorSnapshot> | undefined)?.activeCategoryId ??
-            currentState.activeCategoryId,
+            (persistedState as Partial<CreatorSnapshot> | undefined)
+              ?.activeCategoryId ?? currentState.activeCategoryId,
           formValues:
-            (persistedState as Partial<CreatorSnapshot> | undefined)?.formValues ??
-            currentState.formValues,
+            (persistedState as Partial<CreatorSnapshot> | undefined)
+              ?.formValues ?? currentState.formValues,
         };
         const derived = buildEvaluatedState(nextSnapshot);
 

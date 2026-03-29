@@ -1,5 +1,5 @@
-import type { CreatorCategory } from '../schema/contracts';
 import type { EvaluatedCreatorState } from '../rules/engine';
+import type { CreatorCategory } from '../schema/contracts';
 
 interface CategoryRailProps {
   categories: CreatorCategory[];
@@ -35,7 +35,9 @@ export function CategoryRail({
             aria-pressed={isActive}
           >
             <span>{category.label}</span>
-            <span className={`category-chip__status is-${state.status}`}>{statusLabel[state.status]}</span>
+            <span className={`category-chip__status is-${state.status}`}>
+              {statusLabel[state.status]}
+            </span>
           </button>
         );
       })}

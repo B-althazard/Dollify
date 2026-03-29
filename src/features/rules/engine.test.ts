@@ -41,7 +41,10 @@ describe('rule engine', () => {
       },
     });
 
-    expect(evaluated.formValues['physique.features']).toEqual(['soft-waist', 'long-legs']);
+    expect(evaluated.formValues['physique.features']).toEqual([
+      'soft-waist',
+      'long-legs',
+    ]);
   });
 
   it('marks disabled fields with explicit reasons', () => {
@@ -61,7 +64,9 @@ describe('rule engine', () => {
     });
 
     expect(evaluated.fieldStates['face.finish'].disabled).toBe(true);
-    expect(evaluated.fieldStates['face.finish'].disabledReason).toMatch(/restrained/i);
+    expect(evaluated.fieldStates['face.finish'].disabledReason).toMatch(
+      /restrained/i,
+    );
     expect(evaluated.formValues['face.finish']).toEqual([]);
   });
 

@@ -39,8 +39,18 @@
       "defaultValue": ["female"],
       "required": true,
       "options": [
-        { "id": "female", "label": "Female", "description": "Cis-female creator path.", "tone": "accent" },
-        { "id": "futa", "label": "Futa-Female", "description": "Futa-female creator path.", "tone": "warm" }
+        {
+          "id": "female",
+          "label": "Female",
+          "description": "Cis-female creator path.",
+          "tone": "accent"
+        },
+        {
+          "id": "futa",
+          "label": "Futa-Female",
+          "description": "Futa-female creator path.",
+          "tone": "warm"
+        }
       ]
     },
     {
@@ -53,7 +63,11 @@
       "defaultValue": ["editorial-muse"],
       "required": true,
       "options": [
-        { "id": "editorial-muse", "label": "Editorial Muse", "badge": "Default" },
+        {
+          "id": "editorial-muse",
+          "label": "Editorial Muse",
+          "badge": "Default"
+        },
         { "id": "girl-next-door", "label": "Girl Next Door" },
         { "id": "dominant-star", "label": "Dominant Star" },
         { "id": "glam-athlete", "label": "Glam Athlete" },

@@ -30,7 +30,10 @@ export interface EvaluatedCreatorState {
   isValid: boolean;
 }
 
-function getFieldValues(formValues: Record<string, string[]>, fieldId: string): string[] {
+function getFieldValues(
+  formValues: Record<string, string[]>,
+  fieldId: string,
+): string[] {
   return formValues[fieldId] ?? [];
 }
 
@@ -50,7 +53,9 @@ function matchesCondition(
   const values = getFieldValues(formValues, condition.fieldId);
 
   if (condition.equals) {
-    const targets = Array.isArray(condition.equals) ? condition.equals : [condition.equals];
+    const targets = Array.isArray(condition.equals)
+      ? condition.equals
+      : [condition.equals];
     return targets.some((target) => values.includes(target));
   }
 
@@ -98,36 +103,56 @@ export function evaluateCreatorState(
 
   const fieldStates = Object.fromEntries(
     schema.fields.map((field) => {
-      const visible = matchesCondition(field.visibleWhen, normalizedValues, mode);
+      const visible = matchesCondition(
+        field.visibleWhen,
+        normalizedValues,
+        mode,
+      );
       const disabled = field.disableWhen
         ? matchesCondition(field.disableWhen.condition, normalizedValues, mode)
         : false;
-      const required = field.required || matchesCondition(field.requiredWhen, normalizedValues, mode);
+      const required =
+        field.required ||
+        matchesCondition(field.requiredWhen, normalizedValues, mode);
       const selectedCount = normalizedValues[field.id]?.length ?? 0;
       const issues: string[] = [];
 
       if (!visible) {
         if (selectedCount > 0) {
           normalizedValues[field.id] = [];
-          notices.push(`${field.label} was cleared because it is not available in this mode.`);
+          notices.push(
+            `${field.label} was cleared because it is not available in this mode.`,
+          );
         }
       }
 
       if (disabled) {
         if (selectedCount > 0) {
           normalizedValues[field.id] = [];
-          notices.push(`${field.label} was cleared because its current persona blocks it.`);
+          notices.push(
+            `${field.label} was cleared because its current persona blocks it.`,
+          );
         }
-        issues.push(field.disableWhen?.reason ?? 'This field is unavailable right now.');
+        issues.push(
+          field.disableWhen?.reason ?? 'This field is unavailable right now.',
+        );
       }
 
       if (required && normalizedValues[field.id].length === 0) {
         issues.push('Required selection missing.');
       }
 
-      if (field.maxSelections && normalizedValues[field.id].length > field.maxSelections) {
-        normalizedValues[field.id] = normalizedValues[field.id].slice(0, field.maxSelections);
-        notices.push(`${field.label} was trimmed to ${field.maxSelections} selections.`);
+      if (
+        field.maxSelections &&
+        normalizedValues[field.id].length > field.maxSelections
+      ) {
+        normalizedValues[field.id] = normalizedValues[field.id].slice(
+          0,
+          field.maxSelections,
+        );
+        notices.push(
+          `${field.label} was trimmed to ${field.maxSelections} selections.`,
+        );
       }
 
       return [
@@ -147,19 +172,30 @@ export function evaluateCreatorState(
 
   const categoryStates = Object.fromEntries(
     schema.categories.map((category) => {
-      const categoryFields = schema.fields.filter((field) => field.categoryId === category.id);
+      const categoryFields = schema.fields.filter(
+        (field) => field.categoryId === category.id,
+      );
       const visibleFieldIds = categoryFields
         .filter((field) => fieldStates[field.id].visible)
         .map((field) => field.id);
-      const hasConflict = categoryFields.some((field) => fieldStates[field.id].issues.length > 0);
+      const hasConflict = categoryFields.some(
+        (field) => fieldStates[field.id].issues.length > 0,
+      );
       const allRequiredSatisfied = categoryFields
-        .filter((field) => fieldStates[field.id].visible && fieldStates[field.id].required)
+        .filter(
+          (field) =>
+            fieldStates[field.id].visible && fieldStates[field.id].required,
+        )
         .every((field) => normalizedValues[field.id].length > 0);
 
       return [
         category.id,
         {
-          status: hasConflict ? 'conflict' : allRequiredSatisfied ? 'complete' : 'incomplete',
+          status: hasConflict
+            ? 'conflict'
+            : allRequiredSatisfied
+              ? 'complete'
+              : 'incomplete',
           visibleFieldIds,
         },
       ];
@@ -172,7 +208,9 @@ export function evaluateCreatorState(
     fieldStates,
     categoryStates,
     notices,
-    isValid: Object.values(fieldStates).every((state) => state.issues.length === 0),
+    isValid: Object.values(fieldStates).every(
+      (state) => state.issues.length === 0,
+    ),
   };
 }
 
@@ -182,6 +220,8 @@ export function getVisibleFieldsForCategory(
   categoryId: string,
 ) {
   return schema.fields.filter(
-    (field) => field.categoryId === categoryId && evaluatedState.fieldStates[field.id]?.visible,
+    (field) =>
+      field.categoryId === categoryId &&
+      evaluatedState.fieldStates[field.id]?.visible,
   );
 }

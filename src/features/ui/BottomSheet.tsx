@@ -1,7 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog';
-
-import type { CreatorField } from '../schema/contracts';
 import type { FieldRuleState } from '../rules/engine';
+import type { CreatorField } from '../schema/contracts';
 
 interface BottomSheetProps {
   field: CreatorField | undefined;
@@ -28,7 +27,10 @@ export function BottomSheet({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="sheet-overlay" />
-        <Dialog.Content className="bottom-sheet" aria-describedby={`${field.id}-sheet-description`}>
+        <Dialog.Content
+          className="bottom-sheet"
+          aria-describedby={`${field.id}-sheet-description`}
+        >
           <div className="sheet-handle" />
           <div className="sheet-header">
             <div>
@@ -56,7 +58,9 @@ export function BottomSheet({
                   disabled={state.disabled}
                 >
                   <strong>{option.label}</strong>
-                  {option.description ? <span>{option.description}</span> : null}
+                  {option.description ? (
+                    <span>{option.description}</span>
+                  ) : null}
                 </button>
               );
             })}

@@ -1,7 +1,6 @@
 import { motion } from 'motion/react';
-
-import type { CreatorCategory, CreatorField } from '../schema/contracts';
 import type { EvaluatedCreatorState } from '../rules/engine';
+import type { CreatorCategory, CreatorField } from '../schema/contracts';
 
 import { FieldCard } from './FieldCard';
 import { RuleNotice } from './RuleNotice';
@@ -38,7 +37,9 @@ export function SchemaSection({
       data-testid="swipe-surface"
       initial={reducedMotion ? false : { opacity: 0.5, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={reducedMotion ? { duration: 0 } : { duration: 0.24, ease: 'easeOut' }}
+      transition={
+        reducedMotion ? { duration: 0 } : { duration: 0.24, ease: 'easeOut' }
+      }
       {...swipeHandlers}
     >
       <header className="category-hero card-surface">
@@ -62,7 +63,11 @@ export function SchemaSection({
           state={derived.fieldStates[field.id]}
           values={formValues[field.id] ?? []}
           onChange={(values) => onChangeField(field.id, values)}
-          onOpenSheet={field.type === 'sheet-select' ? () => onOpenSheet(field.id) : undefined}
+          onOpenSheet={
+            field.type === 'sheet-select'
+              ? () => onOpenSheet(field.id)
+              : undefined
+          }
         />
       ))}
     </motion.section>
