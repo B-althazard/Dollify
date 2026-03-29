@@ -1,0 +1,190 @@
+{
+  "version": "1.0.0",
+  "title": "Dollify Creator",
+  "modes": ["female", "futa"],
+  "categories": [
+    {
+      "id": "identity",
+      "label": "Identity",
+      "description": "Set the supported creator mode and base persona cues.",
+      "emptyState": "Choose the identity mode and a persona profile to anchor the creator."
+    },
+    {
+      "id": "physique",
+      "label": "Physique",
+      "description": "Shape the silhouette, curves, and anatomy details.",
+      "emptyState": "Build a silhouette profile with body shape and finishing options."
+    },
+    {
+      "id": "face",
+      "label": "Face",
+      "description": "Control expression, makeup emphasis, and visual focus.",
+      "emptyState": "Select a face focus to tune expression and glamour balance."
+    },
+    {
+      "id": "style",
+      "label": "Style",
+      "description": "Choose clothing, setting, and scene energy.",
+      "emptyState": "Select an outfit and scene pair to give the look context."
+    }
+  ],
+  "fields": [
+    {
+      "id": "identity.mode",
+      "categoryId": "identity",
+      "label": "Mode",
+      "description": "Phase 1 supports only Female and Futa-Female creator paths.",
+      "helperText": "This mode cascades through downstream rule checks.",
+      "type": "single-select",
+      "defaultValue": ["female"],
+      "required": true,
+      "options": [
+        { "id": "female", "label": "Female", "description": "Cis-female creator path.", "tone": "accent" },
+        { "id": "futa", "label": "Futa-Female", "description": "Futa-female creator path.", "tone": "warm" }
+      ]
+    },
+    {
+      "id": "identity.persona",
+      "categoryId": "identity",
+      "label": "Persona direction",
+      "description": "A curated personality framing used later by prompt packaging.",
+      "helperText": "Pick a single starting energy.",
+      "type": "sheet-select",
+      "defaultValue": ["editorial-muse"],
+      "required": true,
+      "options": [
+        { "id": "editorial-muse", "label": "Editorial Muse", "badge": "Default" },
+        { "id": "girl-next-door", "label": "Girl Next Door" },
+        { "id": "dominant-star", "label": "Dominant Star" },
+        { "id": "glam-athlete", "label": "Glam Athlete" },
+        { "id": "luxury-babe", "label": "Luxury Babe" }
+      ]
+    },
+    {
+      "id": "physique.frame",
+      "categoryId": "physique",
+      "label": "Body frame",
+      "description": "Curated overall body silhouette.",
+      "helperText": "Choose one frame profile.",
+      "type": "single-select",
+      "defaultValue": ["hourglass"],
+      "required": true,
+      "options": [
+        { "id": "petite", "label": "Petite" },
+        { "id": "hourglass", "label": "Hourglass" },
+        { "id": "athletic", "label": "Athletic" },
+        { "id": "plush-curves", "label": "Plush Curves" }
+      ]
+    },
+    {
+      "id": "physique.features",
+      "categoryId": "physique",
+      "label": "Figure accents",
+      "description": "Stackable accents that enrich the body read.",
+      "helperText": "Up to 2 accents at a time.",
+      "type": "multi-select",
+      "defaultValue": ["soft-waist"],
+      "maxSelections": 2,
+      "options": [
+        { "id": "soft-waist", "label": "Soft waist" },
+        { "id": "long-legs", "label": "Long legs" },
+        { "id": "full-bust", "label": "Full bust" },
+        { "id": "toned-core", "label": "Toned core" }
+      ]
+    },
+    {
+      "id": "physique.appendage",
+      "categoryId": "physique",
+      "label": "Appendage styling",
+      "description": "Only available in the Futa-Female path.",
+      "helperText": "Shown only when futa mode is active.",
+      "type": "single-select",
+      "defaultValue": ["refined"],
+      "requiredWhen": {
+        "fieldId": "identity.mode",
+        "equals": "futa"
+      },
+      "visibleWhen": {
+        "fieldId": "identity.mode",
+        "equals": "futa"
+      },
+      "options": [
+        { "id": "refined", "label": "Refined" },
+        { "id": "balanced", "label": "Balanced" },
+        { "id": "prominent", "label": "Prominent" }
+      ]
+    },
+    {
+      "id": "face.expression",
+      "categoryId": "face",
+      "label": "Expression",
+      "description": "Surface-level mood for the face.",
+      "helperText": "One expression sets the tone.",
+      "type": "single-select",
+      "defaultValue": ["inviting"],
+      "required": true,
+      "options": [
+        { "id": "inviting", "label": "Inviting" },
+        { "id": "smoldering", "label": "Smoldering" },
+        { "id": "playful", "label": "Playful" },
+        { "id": "serene", "label": "Serene" }
+      ]
+    },
+    {
+      "id": "face.finish",
+      "categoryId": "face",
+      "label": "Face finish",
+      "description": "Visual polish intensity.",
+      "helperText": "Select a single finish pass.",
+      "type": "single-select",
+      "defaultValue": ["soft-glam"],
+      "required": true,
+      "disableWhen": {
+        "condition": {
+          "fieldId": "identity.persona",
+          "equals": "glam-athlete"
+        },
+        "reason": "Glam Athlete keeps makeup restrained in Phase 1."
+      },
+      "options": [
+        { "id": "soft-glam", "label": "Soft glam" },
+        { "id": "editorial-clean", "label": "Editorial clean" },
+        { "id": "wet-glow", "label": "Wet glow" }
+      ]
+    },
+    {
+      "id": "style.outfit",
+      "categoryId": "style",
+      "label": "Outfit story",
+      "description": "Primary styling lane for the look.",
+      "helperText": "One outfit story anchors the scene.",
+      "type": "sheet-select",
+      "defaultValue": ["silk-robe"],
+      "required": true,
+      "options": [
+        { "id": "silk-robe", "label": "Silk robe" },
+        { "id": "lingerie-set", "label": "Lingerie set" },
+        { "id": "clubwear", "label": "Clubwear" },
+        { "id": "swimwear", "label": "Swimwear" },
+        { "id": "sheer-lounge", "label": "Sheer lounge" },
+        { "id": "athleisure", "label": "Athleisure" }
+      ]
+    },
+    {
+      "id": "style.scene",
+      "categoryId": "style",
+      "label": "Scene energy",
+      "description": "Place the look inside a curated environment.",
+      "helperText": "Up to 2 environment tags.",
+      "type": "multi-select",
+      "defaultValue": ["vanity-suite"],
+      "maxSelections": 2,
+      "options": [
+        { "id": "vanity-suite", "label": "Vanity suite" },
+        { "id": "sunlit-loft", "label": "Sunlit loft" },
+        { "id": "moody-club", "label": "Moody club" },
+        { "id": "poolside", "label": "Poolside" }
+      ]
+    }
+  ]
+}
