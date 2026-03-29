@@ -1,8 +1,13 @@
 import { render, screen } from '@testing-library/react';
 
+import { useCreatorStore } from '../features/creator/store';
 import { AppShell } from './AppShell';
 
 describe('AppShell', () => {
+  beforeEach(() => {
+    useCreatorStore.getState().resetCreator();
+  });
+
   it('renders schema-driven creator controls from external metadata', () => {
     render(<AppShell />);
 

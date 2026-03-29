@@ -1,3 +1,5 @@
+import { useReducedMotion } from 'motion/react';
+
 import { getFieldById, getCreatorSchema } from '../features/schema/registry';
 import { getVisibleFieldsForCategory } from '../features/rules/engine';
 import { useCreatorStore } from '../features/creator/store';
@@ -5,10 +7,12 @@ import { BottomSheet } from '../features/ui/BottomSheet';
 import { CategoryRail } from '../features/ui/CategoryRail';
 import { RuleNotice } from '../features/ui/RuleNotice';
 import { SchemaSection } from '../features/ui/SchemaSection';
+import { useSwipeNavigation } from '../features/ui/useSwipeNavigation';
 
 const schema = getCreatorSchema();
 
 export function AppShell() {
+  const reducedMotion = useReducedMotion();
   const {
     activeCategoryId,
     detailSheetFieldId,
@@ -25,6 +29,11 @@ export function AppShell() {
   const activeCategory = schema.categories.find((category) => category.id === activeCategoryId) ?? schema.categories[0];
   const visibleFields = getVisibleFieldsForCategory(schema, derived, activeCategory.id);
   const sheetField = detailSheetFieldId ? getFieldById(detailSheetFieldId) : undefined;
+  const swipeHandlers = useSwipeNavigation({
+    itemIds: schema.categories.map((category) => category.id),
+    activeId: activeCategory.id,
+    onNavigate: setActiveCategory,
+  });
 
   return (
     <main className="app-frame">
@@ -79,6 +88,8 @@ export function AppShell() {
           formValues={formValues}
           onChangeField={setFieldValue}
           onOpenSheet={(fieldId) => openDetailSheet(fieldId)}
+          reducedMotion={Boolean(reducedMotion)}
+          swipeHandlers={swipeHandlers}
         />
 
         <section className="placeholder-grid">

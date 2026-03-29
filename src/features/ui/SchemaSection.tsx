@@ -13,6 +13,11 @@ interface SchemaSectionProps {
   formValues: Record<string, string[]>;
   onChangeField: (fieldId: string, values: string[]) => void;
   onOpenSheet: (fieldId: string) => void;
+  reducedMotion: boolean;
+  swipeHandlers: {
+    onTouchStart: (event: React.TouchEvent<HTMLElement>) => void;
+    onTouchEnd: (event: React.TouchEvent<HTMLElement>) => void;
+  };
 }
 
 export function SchemaSection({
@@ -22,15 +27,19 @@ export function SchemaSection({
   formValues,
   onChangeField,
   onOpenSheet,
+  reducedMotion,
+  swipeHandlers,
 }: SchemaSectionProps) {
   const categoryState = derived.categoryStates[category.id];
 
   return (
     <motion.section
       className="schema-section"
-      initial={{ opacity: 0.5, y: 16 }}
+      data-testid="swipe-surface"
+      initial={reducedMotion ? false : { opacity: 0.5, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.24, ease: 'easeOut' }}
+      transition={reducedMotion ? { duration: 0 } : { duration: 0.24, ease: 'easeOut' }}
+      {...swipeHandlers}
     >
       <header className="category-hero card-surface">
         <div>
