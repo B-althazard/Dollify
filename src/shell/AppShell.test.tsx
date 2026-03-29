@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 
 import { useCreatorStore } from '../features/creator/store';
 import { AppShell } from './AppShell';
@@ -9,11 +10,13 @@ describe('AppShell', () => {
   });
 
   it('renders schema-driven creator controls from external metadata', () => {
-    render(<AppShell />);
+    render(
+      <MemoryRouter initialEntries={['/build']}>
+        <AppShell />
+      </MemoryRouter>,
+    );
 
-    expect(
-      screen.getByRole('heading', { name: 'Dollify' }),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Dollify')).toBeInTheDocument();
     expect(
       screen.getAllByRole('heading', { name: 'Identity' }).length,
     ).toBeGreaterThan(0);
@@ -21,7 +24,7 @@ describe('AppShell', () => {
       screen.getByRole('heading', { name: 'Persona direction' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Package-ready output' }),
+      screen.getByRole('button', { name: 'Generate package' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Generate package' }),

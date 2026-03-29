@@ -1,6 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router-dom';
 
 import { AppShell } from './shell/AppShell';
 import './styles.css';
@@ -10,6 +14,22 @@ const router = createBrowserRouter(
     {
       path: '/',
       element: <AppShell />,
+    },
+    {
+      path: '/build',
+      element: <AppShell />,
+    },
+    {
+      path: '/gen',
+      element: <AppShell />,
+    },
+    {
+      path: '/gallery',
+      element: <AppShell />,
+    },
+    {
+      path: '*',
+      element: <Navigate to="/" replace />,
     },
   ],
   {

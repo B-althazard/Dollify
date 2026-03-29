@@ -5,6 +5,7 @@ import {
   screen,
   waitFor,
 } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { useCreatorStore } from '../features/creator/store';
 import { useLibraryStore } from '../features/library/store';
@@ -30,8 +31,16 @@ describe('AppShell mobile interactions', () => {
     });
   });
 
+  function renderApp(route = '/build') {
+    render(
+      <MemoryRouter initialEntries={[route]}>
+        <AppShell />
+      </MemoryRouter>,
+    );
+  }
+
   it('navigates categories with horizontal swipe intent', () => {
-    render(<AppShell />);
+    renderApp();
 
     swipeLeft(screen.getByTestId('swipe-surface'));
 
@@ -41,7 +50,7 @@ describe('AppShell mobile interactions', () => {
   });
 
   it('lets users toggle into the futa mode and reveals dependent anatomy fields', () => {
-    render(<AppShell />);
+    renderApp();
 
     fireEvent.click(screen.getAllByRole('button', { name: 'Futa-Female' })[0]);
     fireEvent.click(screen.getByRole('button', { name: /Physique/i }));
@@ -52,24 +61,31 @@ describe('AppShell mobile interactions', () => {
   });
 
   it('generates a prompt package and opens review output', async () => {
-    render(<AppShell />);
+    renderApp();
 
     fireEvent.click(screen.getByRole('button', { name: 'Generate package' }));
 
     await waitFor(() => {
       expect(
-        screen.getByRole('heading', { name: 'Positive prompt' }),
+        screen.getByRole('heading', { name: 'Generated prompt' }),
       ).toBeInTheDocument();
     });
     expect(navigator.clipboard.writeText).toHaveBeenCalled();
   });
 
   it('saves a preset and restores it from the preset strip', async () => {
-    render(<AppShell />);
+    renderApp('/gen');
 
+    fireEvent.click(screen.getByRole('button', { name: 'Build' }));
     fireEvent.click(screen.getAllByRole('button', { name: 'Futa-Female' })[0]);
-    fireEvent.click(screen.getByRole('button', { name: 'Save preset' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Reset' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Gen' }));
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: 'Save doll' }),
+      ).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Save doll' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Home' }));
     fireEvent.click(screen.getByRole('button', { name: /Preset 01 - Futa/i }));
 
     await waitFor(() => {
@@ -80,9 +96,11 @@ describe('AppShell mobile interactions', () => {
   });
 
   it('captures a bridge image event into the local gallery', async () => {
-    render(<AppShell />);
+    renderApp('/gen');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Send to Venice' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Push to Venice Bridge' }),
+    );
     await act(async () => {
       window.dispatchEvent(
         new CustomEvent('xgen:image-received', {
@@ -94,11 +112,14 @@ describe('AppShell mobile interactions', () => {
       );
     });
 
-    fireEvent.click(screen.getAllByRole('button', { name: 'Open vault' })[0]);
-    fireEvent.click(screen.getByRole('tab', { name: /Gallery \(1\)/i }));
+    fireEvent.click(screen.getByRole('button', { name: 'Gallery' }));
 
     await waitFor(() => {
-      expect(screen.getByText('Saved')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Tap to load this render back into the Creation Kit./i,
+        ),
+      ).toBeInTheDocument();
     });
   });
 });

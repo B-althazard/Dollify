@@ -61,14 +61,17 @@ export function PromptStudioCard({
 
       <div className="prompt-studio-meta">
         <article>
+          <p className="section-label">Model</p>
           <strong>{model?.label ?? 'No model'}</strong>
           <span>{model?.note ?? 'Select a model profile.'}</span>
         </article>
         <article>
+          <p className="section-label">Canvas</p>
           <strong>{ratio?.label ?? config.aspectRatio}</strong>
           <span>{ratio?.note ?? 'Aspect ratio'}</span>
         </article>
         <article>
+          <p className="section-label">Finish</p>
           <strong>
             {styles.length > 0
               ? styles.map((style) => style.label).join(', ')
@@ -81,10 +84,12 @@ export function PromptStudioCard({
           </span>
         </article>
         <article>
+          <p className="section-label">Vault</p>
           <strong>{presetCount} presets</strong>
           <span>One-tap creator recalls</span>
         </article>
         <article>
+          <p className="section-label">Bridge</p>
           <strong>{galleryCount} gallery items</strong>
           <span>
             {bridgeConnected
@@ -97,14 +102,14 @@ export function PromptStudioCard({
       <div className="prompt-studio-actions">
         <button
           type="button"
-          className="secondary-button"
+          className="secondary-button prompt-action-button"
           onClick={onOpenConfig}
         >
           Prompt setup
         </button>
         <button
           type="button"
-          className="ghost-button"
+          className="ghost-button prompt-action-button"
           onClick={onCopy}
           disabled={!promptPackage}
         >
@@ -112,7 +117,7 @@ export function PromptStudioCard({
         </button>
         <button
           type="button"
-          className="primary-button"
+          className="primary-button prompt-action-button"
           onClick={onOpenPackage}
           disabled={!promptPackage}
         >
@@ -120,17 +125,21 @@ export function PromptStudioCard({
         </button>
         <button
           type="button"
-          className="secondary-button"
+          className="secondary-button prompt-action-button"
           onClick={onSavePreset}
         >
           Save preset
         </button>
-        <button type="button" className="ghost-button" onClick={onOpenLibrary}>
+        <button
+          type="button"
+          className="ghost-button prompt-action-button"
+          onClick={onOpenLibrary}
+        >
           Open vault
         </button>
         <button
           type="button"
-          className="primary-button"
+          className="primary-button prompt-action-button"
           onClick={onSendToBridge}
         >
           Send to Venice

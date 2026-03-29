@@ -60,6 +60,7 @@ interface LibraryStoreState {
   ) => void;
   completeBridgeJob: (nonce: string, imageDataUrl: string) => void;
   failLatestBridgeJob: (message: string) => void;
+  deleteGalleryEntry: (entryId: string) => void;
   resetLibrary: () => void;
 }
 
@@ -265,6 +266,10 @@ export const useLibraryStore = create<LibraryStoreState>()(
             },
           };
         }),
+      deleteGalleryEntry: (entryId) =>
+        set((state) => ({
+          gallery: state.gallery.filter((entry) => entry.id !== entryId),
+        })),
       resetLibrary: () =>
         set({ presets: [], gallery: [], bridge: defaultBridge }),
     }),

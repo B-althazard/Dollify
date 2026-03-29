@@ -34,7 +34,10 @@ export function CategoryRail({
             onClick={() => onSelect(category.id)}
             aria-pressed={isActive}
           >
-            <span>{category.label}</span>
+            <span className="category-chip__body">
+              <strong>{category.label}</strong>
+              <small>{state.status}</small>
+            </span>
             <span className={`category-chip__status is-${state.status}`}>
               {statusLabel[state.status]}
             </span>

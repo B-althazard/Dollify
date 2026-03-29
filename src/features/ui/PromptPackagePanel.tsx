@@ -27,6 +27,7 @@ function PromptSectionCard({
           </button>
         ) : null}
       </div>
+      <div className="prompt-section-card__divider" />
       <p className="prompt-body">{body}</p>
     </article>
   );
@@ -55,6 +56,7 @@ export function PromptPackagePanel({
             <h3>Generation notes</h3>
           </div>
         </div>
+        <div className="prompt-section-card__divider" />
         <div className="prompt-list-group">
           {promptPackage.modelHints.map((hint) => (
             <p key={hint} className="prompt-list-line">

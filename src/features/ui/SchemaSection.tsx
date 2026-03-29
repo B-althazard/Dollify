@@ -11,7 +11,10 @@ interface SchemaSectionProps {
   derived: EvaluatedCreatorState;
   fieldLocks: Record<string, boolean>;
   formValues: Record<string, string[]>;
+  openFieldId: string | null;
   onChangeField: (fieldId: string, values: string[]) => void;
+  onInspectOption: (message: string) => void;
+  onSetOpenField: (fieldId: string | null) => void;
   onToggleFieldLock: (fieldId: string) => void;
   onOpenSheet: (fieldId: string) => void;
   reducedMotion: boolean;
@@ -27,7 +30,10 @@ export function SchemaSection({
   derived,
   fieldLocks,
   formValues,
+  openFieldId,
   onChangeField,
+  onInspectOption,
+  onSetOpenField,
   onToggleFieldLock,
   onOpenSheet,
   reducedMotion,
@@ -47,9 +53,13 @@ export function SchemaSection({
       {...swipeHandlers}
     >
       <header className="category-hero card-surface">
-        <div>
+        <div className="category-hero__content">
           <p className="section-label">{categoryState.status}</p>
           <h2>{category.label}</h2>
+          <p className="category-hero__count">
+            {fields.length} field{fields.length === 1 ? '' : 's'} active in this
+            lane
+          </p>
         </div>
         <p>{category.description}</p>
       </header>
@@ -67,7 +77,12 @@ export function SchemaSection({
           state={derived.fieldStates[field.id]}
           values={formValues[field.id] ?? []}
           locked={Boolean(fieldLocks[field.id])}
+          expanded={openFieldId === field.id}
           onChange={(values) => onChangeField(field.id, values)}
+          onInspectOption={onInspectOption}
+          onToggleOpen={() =>
+            onSetOpenField(openFieldId === field.id ? null : field.id)
+          }
           onToggleLock={() => onToggleFieldLock(field.id)}
           onOpenSheet={
             field.type === 'sheet-select'
