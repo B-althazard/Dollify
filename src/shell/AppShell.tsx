@@ -321,7 +321,6 @@ export function AppShell() {
   );
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [promptConfigOpen, setPromptConfigOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
   const [openFieldId, setOpenFieldId] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>('light');
@@ -670,10 +669,7 @@ export function AppShell() {
             <span className="logo-badge" aria-hidden="true">
               <LogoIcon />
             </span>
-            <div>
-              <strong>Dollify</strong>
-              <span>v{__APP_VERSION__}</span>
-            </div>
+            <span className="top-bar__version">build {__APP_VERSION__}</span>
           </div>
           <p className="top-bar__title">{pageMeta[currentPage].label}</p>
           <div className="top-bar__actions">
@@ -687,9 +683,10 @@ export function AppShell() {
             </button>
             <button
               type="button"
-              className="icon-button"
-              onClick={() => setSettingsOpen(true)}
-              aria-label="Open settings"
+              className="icon-button is-disabled"
+              aria-label="Settings temporarily unavailable"
+              title="Settings temporarily unavailable"
+              disabled
             >
               <SettingsIcon />
             </button>
@@ -713,27 +710,13 @@ export function AppShell() {
           <section className="page-stack">
             <section className="home-hero card-surface">
               <div>
-                <p className="section-label">Mobile-first creator</p>
-                <h1>Build repeatable dolls without writing prompts.</h1>
+                <p className="section-label">Build. Refine. Generate.</p>
+                <h1>Become the best Ai Slut Dummy!</h1>
               </div>
               <p>
-                Jump into a starter kit, reopen saved dolls, or move straight
-                into the generator lane.
+                You can become the best Ai Slut Dummy without writing a single
+                prompt or line of code!
               </p>
-              <div className="home-hero__meta">
-                <article>
-                  <strong>{schema.categories.length}</strong>
-                  <span>Creation lanes</span>
-                </article>
-                <article>
-                  <strong>{presets.length}</strong>
-                  <span>Vault presets</span>
-                </article>
-                <article>
-                  <strong>{gallery.length}</strong>
-                  <span>Local renders</span>
-                </article>
-              </div>
             </section>
 
             <section className="page-section">
@@ -1134,65 +1117,6 @@ export function AppShell() {
         </nav>
 
         <div className="floating-fab">{pageActions}</div>
-
-        <Dialog.Root open={settingsOpen} onOpenChange={setSettingsOpen}>
-          <Dialog.Portal>
-            <Dialog.Overlay className="sheet-overlay" />
-            <Dialog.Content
-              className="bottom-sheet"
-              aria-describedby={undefined}
-            >
-              <div className="sheet-handle" />
-              <div className="sheet-header">
-                <div>
-                  <Dialog.Title>Settings</Dialog.Title>
-                  <p>Metrics, prompt setup, and local vault controls.</p>
-                </div>
-                <Dialog.Close className="sheet-close">Close</Dialog.Close>
-              </div>
-              <section className="settings-grid">
-                <article className="stats-card card-surface">
-                  <span>Studio lanes</span>
-                  <strong>{schema.categories.length}</strong>
-                </article>
-                <article className="stats-card card-surface">
-                  <span>Vault presets</span>
-                  <strong>{presets.length}</strong>
-                </article>
-                <article className="stats-card card-surface">
-                  <span>Local renders</span>
-                  <strong>{gallery.length}</strong>
-                </article>
-                <article className="stats-card card-surface">
-                  <span>Bridge</span>
-                  <strong>{bridge.connected ? 'Ready' : 'Waiting'}</strong>
-                </article>
-              </section>
-              <div className="settings-actions">
-                <button
-                  type="button"
-                  className="secondary-button prompt-action-button"
-                  onClick={() => {
-                    setSettingsOpen(false);
-                    setPromptConfigOpen(true);
-                  }}
-                >
-                  Prompt setup
-                </button>
-                <button
-                  type="button"
-                  className="ghost-button prompt-action-button"
-                  onClick={() => {
-                    setSettingsOpen(false);
-                    setLibraryOpen(true);
-                  }}
-                >
-                  Open vault
-                </button>
-              </div>
-            </Dialog.Content>
-          </Dialog.Portal>
-        </Dialog.Root>
 
         <Dialog.Root
           open={Boolean(sheetField)}

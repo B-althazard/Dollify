@@ -16,7 +16,12 @@ describe('AppShell', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('Dollify')).toBeInTheDocument();
+    expect(screen.getByText(/^Build$/)).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', {
+        name: 'Settings temporarily unavailable',
+      }),
+    ).toBeDisabled();
     expect(
       screen.getAllByRole('heading', { name: 'Identity' }).length,
     ).toBeGreaterThan(0);

@@ -1,15 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from 'react-router-dom';
+import { createHashRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import { AppShell } from './shell/AppShell';
 import './styles.css';
 
-const router = createBrowserRouter(
+const router = createHashRouter(
   [
     {
       path: '/',
