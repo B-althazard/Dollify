@@ -12,7 +12,7 @@ Dollify v1 should move from a trustworthy schema-driven creator into prompt gene
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Schema-Driven Creator Foundation** - Establish the mobile-first creator shell, schema rendering, and rule-safe character setup.
+- [x] **Phase 1: Schema-Driven Creator Foundation** - Establish the mobile-first creator shell, schema rendering, and rule-safe character setup. _(Completed 2026-03-29)_
 - [ ] **Phase 2: Prompt Package Workflow** - Turn creator state into model-aware prompt packages with reliable copy and generate actions.
 - [ ] **Phase 3: Lock-Aware Exploration** - Let users randomize safely while preserving intent and valid combinations.
 - [ ] **Phase 4: Preset Libraries And Local Reuse** - Ship built-in preset families, saved presets, and a reloadable local gallery.
@@ -88,7 +88,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Schema-Driven Creator Foundation | 0/5 | Planned | `.planning/phases/01-schema-driven-creator-foundation/PLAN.md` |
+| 1. Schema-Driven Creator Foundation | 1/1 | Complete | 2026-03-29 |
 | 2. Prompt Package Workflow | 0/TBD | Not started | - |
 | 3. Lock-Aware Exploration | 0/TBD | Not started | - |
 | 4. Preset Libraries And Local Reuse | 0/TBD | Not started | - |
