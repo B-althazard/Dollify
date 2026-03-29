@@ -10,7 +10,9 @@ const router = createBrowserRouter([
     path: '/',
     element: <AppShell />,
   },
-]);
+], {
+  basename: '/Dollify',
+});
 
 const rootElement = document.getElementById('root');
 
